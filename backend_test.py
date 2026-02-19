@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Backend Testing Suite for Nova Poshta TTN Automation (BLOCK M3)
+Backend Testing Suite for Y-Store O13-O18 Modules
 
-Tests V2 delivery endpoints:
-- POST /api/v2/delivery/novaposhta/ttn
-- GET /api/v2/delivery/orders/{order_id}/shipment
+Tests new admin APIs:
+- Guard: incidents, mute, resolve
+- Risk: distribution
+- Timeline: user events
+- Analytics: KPI data, daily rebuild
 - Admin authentication
-- Order status validation
-- Idempotency support
 """
 
 import requests
@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 # Load environment variables from frontend .env for public URL
 load_dotenv('/app/frontend/.env')
 
-class NPTTNTester:
+class YStoreAPITester:
     def __init__(self, base_url=None):
         self.base_url = base_url or os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:3000')
         self.admin_token = None
