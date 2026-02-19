@@ -472,7 +472,9 @@ class YStoreAPITester:
             '/v2/admin/guard/incidents',
             '/v2/admin/risk/distribution',
             f'/v2/admin/timeline/{self.test_user_id}',
-            '/v2/admin/analytics/ops-kpi?range=7'
+            '/v2/admin/analytics/ops-kpi?range=7',
+            '/v2/admin/pickup-control/kpi',
+            '/v2/admin/pickup-control/risk?days=5'
         ]
         
         results = []
