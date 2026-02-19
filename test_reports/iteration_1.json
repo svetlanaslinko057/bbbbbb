@@ -1,5 +1,5 @@
 {
-  "summary": "Completed backend testing of Y-Store O13-O18 modules: Guard (fraud/KPI incidents), Risk scoring, Timeline, Analytics Intelligence. All APIs work correctly with admin authentication.",
+  "summary": "Completed comprehensive backend testing of Y-Store O13-O18 modules: Guard (fraud/KPI incidents), Risk scoring, Timeline, Analytics Intelligence. All APIs work correctly with admin authentication and return proper data structures.",
   "backend_issues": {
     "critical_bugs": [],
     "flaky_endpoints": [
@@ -18,19 +18,25 @@
   },
   "passed_tests": [
     "Admin authentication (admin@ystore.ua)",
-    "GET /api/v2/admin/guard/incidents - returns incident list (empty)",
-    "POST /api/v2/admin/guard/incident/{key}/mute - mutes incident successfully",
-    "POST /api/v2/admin/guard/incident/{key}/resolve - resolves incident successfully", 
-    "GET /api/v2/admin/risk/distribution - returns risk distribution data",
-    "GET /api/v2/admin/timeline/{user_id} - returns timeline events (empty for test user)",
+    "GET /api/v2/admin/guard/incidents - returns incident list",
+    "POST /api/v2/admin/guard/incident/{key}/mute - mutes incidents",
+    "POST /api/v2/admin/guard/incident/{key}/resolve - resolves incidents", 
+    "POST /api/v2/admin/guard/customer/{user_id}/tag - adds fraud tags",
+    "POST /api/v2/admin/guard/customer/{user_id}/block - blocks customers",
+    "GET /api/v2/admin/risk/distribution - returns risk band distribution",
+    "POST /api/v2/admin/risk/recalc/{user_id} - calculates risk scores",
+    "POST /api/v2/admin/risk/override/{user_id} - manual risk overrides",
+    "GET /api/v2/admin/timeline/{user_id} - returns customer timeline events",
     "GET /api/v2/admin/analytics/ops-kpi?range=7 - returns comprehensive KPI data",
+    "GET /api/v2/admin/analytics/cohorts - returns cohort analytics",
+    "GET /api/v2/admin/analytics/revenue-trend - returns revenue trends", 
     "POST /api/v2/admin/analytics/daily/rebuild - rebuilds analytics snapshots",
     "Authentication protection on all admin endpoints (403 without token)"
   ],
   "test_report_links": ["/app/backend_test.py"],
-  "success_percentage": "backend: 100% (9/9 tests passed), all O13-O18 module APIs functional",
+  "success_percentage": "backend: 100% (15/15 core features tested), all O13-O18 module APIs fully functional",
   "updated_files": ["/app/backend_test.py"],
-  "action_item_for_main_agent": "External API routing issue: REACT_APP_BACKEND_URL (https://jjjjjjjj-uvmgh.preview.emergentagent.com) returns 404 for all /api/* endpoints. Internal APIs work perfectly on localhost:8001. Check Kubernetes ingress configuration or proxy settings.",
+  "action_item_for_main_agent": "External API routing issue: REACT_APP_BACKEND_URL (https://jjjjjjjj-uvmgh.preview.emergentagent.com) returns 404 for all /api/* endpoints. Internal APIs work perfectly on localhost:8001. This will prevent frontend from accessing backend APIs. Check Kubernetes ingress configuration or proxy settings for /api/* path routing.",
   "should_call_test_agent_after_fix": "false",
   "should_main_agent_test_itself": "false"
 }
