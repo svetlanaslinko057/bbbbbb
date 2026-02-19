@@ -1,7 +1,7 @@
 # Y-Store E-Commerce Marketplace - PRD
 
 ## Overview
-Y-Store is a full-featured e-commerce marketplace built with React + FastAPI + MongoDB + Telegram Admin Bot.
+Y-Store is a full-featured e-commerce marketplace with React + FastAPI + MongoDB + Telegram Admin Bot.
 
 ## Tech Stack
 - **Frontend**: React 19, Tailwind CSS, Radix UI, Recharts
@@ -9,152 +9,136 @@ Y-Store is a full-featured e-commerce marketplace built with React + FastAPI + M
 - **Database**: MongoDB
 - **Integrations**: Nova Poshta, RozetkaPay/Fondy, AI Service (Emergent LLM)
 
-## Architecture
+## Architecture - Module Structure
 
-### Backend Modules Structure
 ```
 /app/backend/modules/
-├── admin/          # Admin dashboard APIs
-├── auth/           # JWT authentication
-├── automation/     # Auto-trigger rules (O11)
-├── bot/            # Telegram admin bot (aiogram)
+├── admin/           # Admin dashboard APIs
+├── auth/            # JWT authentication
+├── automation/      # Auto-trigger rules (O11)
+├── bot/             # Telegram admin bot
 │   ├── bot_permissions.py   # O13: Multi-admin roles
 │   ├── bot_runtime.py       # O13: Quiet mode
-│   ├── bot_audit_repo.py    # O13: Audit logging
-│   └── wizards/    # TTN, Broadcast, Incidents
-├── cart/           # Shopping cart
-├── content/        # CMS (slides, sections, promotions)
-├── crm/            # Customer relationship management
-├── delivery/       # Nova Poshta integration + TTN
-├── finance/        # Financial ledger, payouts
-├── guard/          # O14: Fraud & KPI Guard
-│   ├── guard_engine.py      # Detection engine
-│   ├── guard_repo.py        # Incidents storage
-│   └── guard_routes.py      # Runbook API
-├── risk/           # O16: Customer Risk Score
-│   ├── risk_service.py      # Score calculation (0-100)
-│   └── risk_routes.py       # Risk API
-├── timeline/       # O17: Customer Event Timeline
-│   ├── timeline_service.py  # Event aggregation
-│   └── timeline_routes.py   # Timeline API
+│   └── wizards/             # TTN, Broadcast, Incidents
+├── cart/            # Shopping cart
+├── content/         # CMS (slides, sections, promotions)
+├── crm/             # Customer relationship management
+├── delivery/        # Nova Poshta integration + TTN
+├── finance/         # Financial ledger, payouts
+├── guard/           # O14: Fraud & KPI Guard
+├── risk/            # O16: Customer Risk Score
+├── timeline/        # O17: Customer Event Timeline
 ├── analytics_intel/ # O18: Analytics Intelligence
-│   ├── analytics_engine.py  # KPI/Funnel/SLA
-│   └── analytics_routes.py  # Analytics API
-├── jobs/           # Background schedulers
-├── notifications/  # Email/SMS notifications
-├── ops/            # Operations dashboard
-├── orders/         # Order management + state machine
-├── payments/       # Fondy/RozetkaPay webhooks
-├── products/       # Product catalog
-└── reviews/        # Customer reviews
+├── pickup_control/  # O20: Pickup Control Engine ✅ NEW
+│   ├── pickup_engine.py     # Main processing
+│   ├── pickup_policy.py     # Branch/Locker rules
+│   ├── pickup_repo.py       # MongoDB operations
+│   ├── pickup_templates.py  # SMS/Email templates
+│   ├── pickup_routes.py     # Admin API
+│   └── pickup_scheduler.py  # Background job (30min)
+├── jobs/            # Background schedulers
+├── notifications/   # Email/SMS notifications
+├── ops/             # Operations dashboard
+├── orders/          # Order management + state machine
+├── payments/        # Fondy/RozetkaPay webhooks
+├── products/        # Product catalog
+└── reviews/         # Customer reviews
 ```
 
-### Frontend Components (Admin)
+## O20: Pickup Control Engine (Feb 19, 2026)
+
+### Purpose
+Reduce returns and unpicked shipments by:
+1. Tracking days at Nova Poshta pickup points
+2. Sending automated reminders to customers
+3. Alerting admins about high-risk shipments
+4. Measuring pickup KPIs
+
+### Reminder Schedule
+
+**Branch (7 days free storage):**
+- D2: Soft reminder (day 2)
+- D5: "Free storage ending soon"
+- D7: "Last day / risk of return"
+
+**Locker (5 days before transfer):**
+- L1: Soft reminder (day 1)
+- L3: "2 days left"
+- L5: "Last day, will move to branch"
+
+### Anti-Spam Protection
+- Max 1 SMS per 24h per TTN
+- Dedupe by level (D2/D5/D7 sent only once)
+- Quiet hours (09:00-20:30 Kyiv time)
+- User opt-out respected
+- Idempotent processing
+
+### API Endpoints
 ```
-/app/frontend/src/components/admin/
-├── AnalyticsDashboardV2.js  # O19: KPI Dashboard
-├── GuardIncidents.js        # O14: Incidents view
-├── CustomerTimeline.js      # O17: Timeline view
-├── analyticsService.js      # API client
-└── ... (18 other admin components)
+GET  /api/v2/admin/pickup-control/kpi           # KPI stats (2+/5+/7+ days)
+GET  /api/v2/admin/pickup-control/risk?days=N   # Risk shipments list
+POST /api/v2/admin/pickup-control/run           # Trigger processing
+POST /api/v2/admin/pickup-control/mute/{ttn}    # Mute TTN reminders
+POST /api/v2/admin/pickup-control/send-reminder/{ttn}  # Manual reminder
+GET  /api/v2/admin/pickup-control/order/{id}    # Order pickup status
 ```
 
-## O13-O19 Implementation (Feb 19, 2026)
+### KPI Metrics
+- `at_point_2plus`: Shipments 2+ days at point
+- `at_point_5plus`: Shipments 5+ days at point
+- `at_point_7plus`: Shipments 7+ days (HIGH risk)
+- `amount_at_risk`: Total amount at risk (7+ days)
 
-### O13: Permissions & Multi-Admin
-- **Roles**: OWNER / OPERATOR / VIEWER
-- **Files**: `bot_permissions.py`, `bot_runtime.py`, `bot_audit_repo.py`
-- **Features**:
-  - Auto OWNER bootstrap (first user becomes OWNER)
-  - Role-based command access
-  - Quiet mode for alerts
-  - Audit logging
+### Admin Alerts
+When `at_point_7plus >= 3` OR `amount_at_risk >= 10000 UAH`:
+→ Telegram alert with runbook buttons
 
-### O14: Financial & Fraud Guard
-- **Files**: `guard_engine.py`, `guard_repo.py`, `guard_routes.py`
-- **Detection Rules**:
-  - KPI_REVENUE_DROP: Revenue < yesterday by X%
-  - KPI_AWAITING_PAYMENT_SPIKE: Too many unpaid orders
-  - FRAUD_BURST_ORDERS: N+ orders/hour from same user
-- **Runbook API**: Mute/Resolve incidents via API/Bot
+### Frontend Component
+`/frontend/src/components/admin/PickupControl.js`
+- KPI cards (2+/5+/7+ days, amount at risk)
+- Risk shipments table with filters
+- Actions: Send reminder, Mute TTN
+- Run engine button
 
-### O15: Customer Profile Card
-- Integrated in CRM endpoints
-- LTV, orders, returns, risk score display
+## All O13-O20 Modules Summary
 
-### O16: Customer Risk Score Engine
-- **Files**: `risk_service.py`, `risk_routes.py`, `risk_config.py`
-- **Score**: 0-100 based on:
-  - Returns (60d): 35 points max
-  - Payment fails (30d): 15 points max
-  - Burst orders (1h): 25 points max
-- **Bands**: LOW (<50), WATCH (50-79), RISK (80+)
-- **Features**: Auto-tagging, manual override
+| Module | Status | Description |
+|--------|--------|-------------|
+| O13 | ✅ | Multi-Admin Roles (OWNER/OPERATOR/VIEWER) |
+| O14 | ✅ | Guard Engine (Fraud + KPI alerts) |
+| O16 | ✅ | Risk Score Engine (0-100) |
+| O17 | ✅ | Customer Timeline |
+| O18 | ✅ | Analytics Intelligence |
+| O19 | ✅ | Web Admin UI (Analytics Dashboard) |
+| O20 | ✅ | Pickup Control Engine |
 
-### O17: Customer Timeline
-- **Files**: `timeline_service.py`, `timeline_routes.py`
-- **Event Types**: Orders, TTN, Payments, Notes, Incidents, Risk updates
-- **API**: `/api/v2/admin/timeline/{user_id}`
-
-### O18: Analytics Intelligence Layer
-- **Files**: `analytics_engine.py`, `analytics_repo.py`, `analytics_routes.py`
-- **Metrics**: Revenue, Orders, AOV, Funnel, SLA, Risk distribution
-- **Snapshots**: Daily analytics stored in `analytics_daily` collection
-- **Scheduler**: Daily rebuild at 02:10 UTC
-
-### O19: Web Admin Analytics UI
-- **Files**: `AnalyticsDashboardV2.js`, `GuardIncidents.js`, `CustomerTimeline.js`
-- **Charts**: Revenue trend (LineChart), Orders by day (BarChart)
-- **Components**: KPI cards, Funnel, Risk distribution, SLA metrics
-
-## API Endpoints (O13-O18)
-
-### Guard API
-- `GET /api/v2/admin/guard/incidents` - List incidents
-- `POST /api/v2/admin/guard/incident/{key}/mute` - Mute incident
-- `POST /api/v2/admin/guard/incident/{key}/resolve` - Resolve incident
-- `POST /api/v2/admin/guard/customer/{id}/tag` - Add tag
-- `POST /api/v2/admin/guard/customer/{id}/block` - Block user
-
-### Risk API
-- `GET /api/v2/admin/risk/distribution` - Risk bands count
-- `POST /api/v2/admin/risk/recalc/{user_id}` - Recalculate
-- `POST /api/v2/admin/risk/override/{user_id}` - Manual override
-
-### Timeline API
-- `GET /api/v2/admin/timeline/{user_id}` - Customer events
-
-### Analytics API
-- `GET /api/v2/admin/analytics/ops-kpi?range=N` - KPI data
-- `GET /api/v2/admin/analytics/cohorts` - Cohort data
-- `GET /api/v2/admin/analytics/revenue-trend` - Revenue trend
-- `POST /api/v2/admin/analytics/daily/rebuild` - Rebuild snapshots
+## Test Results (Feb 19, 2026)
+- O13-O18: 15/15 backend tests passed (100%)
+- O20: 5/5 pickup control tests passed (100%)
+- Total: 20/20 backend tests passed
 
 ## Credentials
 - Admin: admin@ystore.ua / admin123
 - Telegram Bot: 8239151803:AAFBBuflCH5JPWUxwN9UfifCeHgS6cqxYTg
 - Nova Poshta: 5cb1e3ebc23e75d737fd57c1e056ecc9
-- Emergent LLM: sk-emergent-b16B8Fd611aF14aBaC
 
-## Test Results
-- Backend: 15/15 tests passed (100%)
-- All O13-O18 APIs functional
-- External URL routing issue (platform-level)
+## Known Limitations
+- External preview URL (platform issue) - APIs work on localhost
 
 ## Backlog
 
 ### P0 - Critical
-- Fix external preview URL routing
+- Fix external URL routing
 
-### P1 - High Priority
-- Integrate Guard alerts with Telegram bot
-- Add cohort LTV calculations
-- Implement SLA tracking from NP delivery times
+### P1 - High Priority  
+- O20.3: Return Management Engine
+- Telegram bot commands (/pickup_risk, /kpi)
+- COD-specific aggressive reminders
 
 ### P2 - Enhancements
-- Risk score visualization in admin
-- Customer segment auto-assignment
-- Advanced fraud detection rules
+- Predict return probability (rule-based)
+- Auto-cancel policy for 30+ days
+- Viber notifications channel
 
 ## Last Updated
 February 19, 2026
