@@ -49,6 +49,8 @@ class YStoreAPITester:
         if headers:
             req_headers.update(headers)
         
+        print(f"Making {method} request to: {url}")
+        
         try:
             if method == 'GET':
                 response = requests.get(url, headers=req_headers, timeout=30)
