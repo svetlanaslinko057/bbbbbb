@@ -86,10 +86,10 @@ const PayoutsDashboard = () => {
 
   const getPaymentMethodLabel = (method) => {
     const methods = {
-      bank_transfer: 'Банковский перевод',
+      bank_transfer: 'Банківський переказ',
       paypal: 'PayPal',
       stripe: 'Stripe',
-      card: 'Банковская карта'
+      card: 'Банківська картка'
     };
     return methods[method] || method;
   };
