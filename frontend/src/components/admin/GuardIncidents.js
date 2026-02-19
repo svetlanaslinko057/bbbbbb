@@ -1,6 +1,6 @@
 /**
- * O14: Guard Incidents Dashboard
- * View and manage fraud/KPI incidents
+ * O14: Інциденти безпеки (Guard)
+ * Перегляд та управління інцидентами шахрайства/KPI
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -36,7 +36,7 @@ const GuardIncidents = () => {
       await analyticsService.muteIncident(key, hours);
       loadIncidents();
     } catch (err) {
-      alert('Failed to mute: ' + err.message);
+      alert('Помилка: ' + err.message);
     }
   };
 
@@ -45,7 +45,7 @@ const GuardIncidents = () => {
       await analyticsService.resolveIncident(key);
       loadIncidents();
     } catch (err) {
-      alert('Failed to resolve: ' + err.message);
+      alert('Помилка: ' + err.message);
     }
   };
 
@@ -54,6 +54,14 @@ const GuardIncidents = () => {
       case 'CRITICAL': return 'bg-red-100 text-red-800 border-red-200';
       case 'WARN': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default: return 'bg-blue-100 text-blue-800 border-blue-200';
+    }
+  };
+
+  const getSeverityLabel = (severity) => {
+    switch (severity) {
+      case 'CRITICAL': return 'Критичний';
+      case 'WARN': return 'Попередження';
+      default: return 'Інфо';
     }
   };
 
@@ -73,11 +81,11 @@ const GuardIncidents = () => {
 
   return (
     <div className="space-y-6" data-testid="guard-incidents">
-      {/* Header */}
+      {/* Заголовок */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Shield className="w-7 h-7 text-purple-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Guard Incidents</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Інциденти безпеки</h1>
         </div>
         <button
           onClick={loadIncidents}
@@ -85,7 +93,7 @@ const GuardIncidents = () => {
           data-testid="refresh-incidents"
         >
           <RefreshCw className="w-4 h-4" />
-          Refresh
+          Оновити
         </button>
       </div>
 
@@ -98,8 +106,8 @@ const GuardIncidents = () => {
       {incidents.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-sm">
           <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">All Clear</h3>
-          <p className="text-gray-500">No active incidents</p>
+          <h3 className="text-lg font-semibold text-gray-900">Все гаразд</h3>
+          <p className="text-gray-500">Активних інцидентів немає</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -119,19 +127,19 @@ const GuardIncidents = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-gray-900">{inc.title}</h3>
                       <span className={`px-2 py-0.5 text-xs rounded-full border ${getSeverityColor(inc.severity)}`}>
-                        {inc.severity}
+                        {getSeverityLabel(inc.severity)}
                       </span>
                       {inc.status === 'MUTED' && (
                         <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
-                          MUTED
+                          Заглушено
                         </span>
                       )}
                     </div>
                     <p className="text-sm text-gray-600 mt-1">{inc.description}</p>
                     <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
-                      <span>Type: {inc.type}</span>
-                      <span>Entity: {inc.entity}</span>
-                      <span>Created: {inc.created_at?.slice(0, 16)}</span>
+                      <span>Тип: {inc.type}</span>
+                      <span>Сутність: {inc.entity}</span>
+                      <span>Створено: {inc.created_at?.slice(0, 16)}</span>
                     </div>
                   </div>
                 </div>
@@ -140,39 +148,39 @@ const GuardIncidents = () => {
                   <button
                     onClick={() => handleMute(inc.key, 1)}
                     className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
-                    title="Mute 1 hour"
+                    title="Заглушити на 1 годину"
                   >
                     <BellOff className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleResolve(inc.key)}
                     className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
-                    title="Resolve"
+                    title="Вирішено"
                   >
                     <CheckCircle className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Actions */}
+              {/* Дії */}
               <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
                 <button
                   onClick={() => handleMute(inc.key, 1)}
                   className="px-3 py-1.5 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
-                  Mute 1h
+                  Заглушити 1 год
                 </button>
                 <button
                   onClick={() => handleMute(inc.key, 24)}
                   className="px-3 py-1.5 text-sm bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
-                  Mute 24h
+                  Заглушити 24 год
                 </button>
                 <button
                   onClick={() => handleResolve(inc.key)}
                   className="px-3 py-1.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200"
                 >
-                  Resolve
+                  Вирішено
                 </button>
               </div>
             </div>
