@@ -19,6 +19,31 @@ const AnalyticsDashboard = () => {
   const [error, setError] = useState(null);
   const [riskDist, setRiskDist] = useState({});
 
+  // Українські переклади
+  const t = {
+    title: 'Аналітика',
+    revenue: 'Виручка',
+    orders: 'Замовлення',
+    aov: 'Середній чек',
+    delivered: 'Доставлено',
+    revenueTrend: 'Динаміка виручки',
+    ordersByDay: 'Замовлення по днях',
+    orderFunnel: 'Воронка замовлень',
+    riskDistribution: 'Розподіл ризиків',
+    deliverySLA: 'SLA доставки (години)',
+    average: 'Середнє',
+    median: 'Медіана',
+    paid: 'Оплачено',
+    awaitingPayment: 'Очікує оплати',
+    processing: 'В обробці',
+    shipped: 'Відправлено',
+    cancelled: 'Скасовано',
+    returned: 'Повернення',
+    days: 'днів',
+    refresh: 'Оновити',
+    loading: 'Завантаження...',
+  };
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
