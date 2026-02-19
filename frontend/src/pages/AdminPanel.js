@@ -192,7 +192,7 @@ const AdminPanel = () => {
             }`}
           >
             <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="hidden sm:inline">Расширенная</span>
+            <span className="hidden sm:inline">Розширена</span>
             <span className="sm:hidden">📈</span>
           </button>
           <button
