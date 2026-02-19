@@ -315,6 +315,155 @@ class YStoreAPITester:
             return self.log_result("Analytics Daily Rebuild", False,
                 f"Status: {response['status_code']}, Data: {response['data']}")
 
+    def test_pickup_control_kpi(self):
+        """Test GET /api/v2/admin/pickup-control/kpi"""
+        print(f"\n🔍 Testing Pickup Control KPI...")
+        
+        if not self.admin_token:
+            return self.log_result("Pickup Control KPI", False, "No admin token")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        response, error = self.make_request(
+            'GET', '/v2/admin/pickup-control/kpi',
+            headers=headers,
+            expect_status=200
+        )
+        
+        if error:
+            return self.log_result("Pickup Control KPI", False, f"Error: {error}")
+        
+        if response["success"]:
+            data = response["data"]
+            # Check for expected KPI fields
+            kpi_fields = ["at_point_2plus", "at_point_5plus", "at_point_7plus", "amount_at_risk"]
+            has_kpi_structure = any(field in data for field in kpi_fields)
+            return self.log_result("Pickup Control KPI", has_kpi_structure,
+                f"KPI data: {data}")
+        else:
+            return self.log_result("Pickup Control KPI", False,
+                f"Status: {response['status_code']}, Data: {response['data']}")
+
+    def test_pickup_control_risk_list(self):
+        """Test GET /api/v2/admin/pickup-control/risk?days=5"""
+        print(f"\n🔍 Testing Pickup Control Risk List...")
+        
+        if not self.admin_token:
+            return self.log_result("Pickup Control Risk List", False, "No admin token")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        response, error = self.make_request(
+            'GET', '/v2/admin/pickup-control/risk?days=5&limit=100',
+            headers=headers,
+            expect_status=200
+        )
+        
+        if error:
+            return self.log_result("Pickup Control Risk List", False, f"Error: {error}")
+        
+        if response["success"]:
+            data = response["data"]
+            # Should have items, count, and filter_days fields
+            has_structure = "items" in data and "count" in data and "filter_days" in data
+            return self.log_result("Pickup Control Risk List", has_structure,
+                f"Found {data.get('count', 0)} risk items, filter: {data.get('filter_days')} days")
+        else:
+            return self.log_result("Pickup Control Risk List", False,
+                f"Status: {response['status_code']}, Data: {response['data']}")
+
+    def test_pickup_control_run_engine(self):
+        """Test POST /api/v2/admin/pickup-control/run"""
+        print(f"\n🔍 Testing Pickup Control Run Engine...")
+        
+        if not self.admin_token:
+            return self.log_result("Pickup Control Run Engine", False, "No admin token")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        response, error = self.make_request(
+            'POST', '/v2/admin/pickup-control/run',
+            data={"limit": 50},  # Small limit for testing
+            headers=headers,
+            expect_status=200
+        )
+        
+        if error:
+            return self.log_result("Pickup Control Run Engine", False, f"Error: {error}")
+        
+        if response["success"]:
+            data = response["data"]
+            # Should have processing results
+            has_result_structure = all(field in data for field in ["ok", "processed", "sent", "high_risk_count", "errors"])
+            return self.log_result("Pickup Control Run Engine", has_result_structure,
+                f"Processed: {data.get('processed', 0)}, Sent: {data.get('sent', 0)}, Risk: {data.get('high_risk_count', 0)}")
+        else:
+            return self.log_result("Pickup Control Run Engine", False,
+                f"Status: {response['status_code']}, Data: {response['data']}")
+
+    def test_pickup_control_mute_ttn(self):
+        """Test POST /api/v2/admin/pickup-control/mute/{ttn}"""
+        print(f"\n🔍 Testing Pickup Control Mute TTN...")
+        
+        if not self.admin_token:
+            return self.log_result("Pickup Control Mute TTN", False, "No admin token")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        test_ttn = "20450123456789"  # Test TTN
+        
+        response, error = self.make_request(
+            'POST', f'/v2/admin/pickup-control/mute/{test_ttn}',
+            data={"days": 7},
+            headers=headers,
+            expect_status=200
+        )
+        
+        if error:
+            return self.log_result("Pickup Control Mute TTN", False, f"Error: {error}")
+        
+        if response["success"]:
+            data = response["data"]
+            # Should confirm mute operation
+            has_mute_structure = "ok" in data and "ttn" in data and "muted_days" in data
+            return self.log_result("Pickup Control Mute TTN", has_mute_structure,
+                f"Muted TTN: {data.get('ttn')}, Days: {data.get('muted_days')}")
+        else:
+            return self.log_result("Pickup Control Mute TTN", False,
+                f"Status: {response['status_code']}, Data: {response['data']}")
+
+    def test_pickup_control_send_reminder(self):
+        """Test POST /api/v2/admin/pickup-control/send-reminder/{ttn}"""
+        print(f"\n🔍 Testing Pickup Control Send Reminder...")
+        
+        if not self.admin_token:
+            return self.log_result("Pickup Control Send Reminder", False, "No admin token")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        test_ttn = "20450123456789"  # Test TTN
+        
+        response, error = self.make_request(
+            'POST', f'/v2/admin/pickup-control/send-reminder/{test_ttn}',
+            data={"level": "D5"},
+            headers=headers,
+            expect_status=404  # Expected since test order doesn't exist
+        )
+        
+        if error:
+            return self.log_result("Pickup Control Send Reminder", False, f"Error: {error}")
+        
+        # For this test, 404 is acceptable since no test data exists
+        if response["status_code"] == 404:
+            return self.log_result("Pickup Control Send Reminder", True,
+                "404 as expected (no test orders exist)")
+        elif response["success"]:
+            data = response["data"]
+            has_reminder_structure = "ok" in data and "ttn" in data
+            return self.log_result("Pickup Control Send Reminder", has_reminder_structure,
+                f"Reminder sent for TTN: {data.get('ttn')}")
+        else:
+            return self.log_result("Pickup Control Send Reminder", False,
+                f"Status: {response['status_code']}, Data: {response['data']}")
+
     def test_admin_authentication_required(self):
         """Test that admin authentication is required for all endpoints"""
         print(f"\n🔍 Testing admin authentication requirement...")
