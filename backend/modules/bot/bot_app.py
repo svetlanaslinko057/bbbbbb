@@ -61,6 +61,9 @@ db = client[DB_NAME]
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
+# O20.2: Include Pickup Control Router
+dp.include_router(pickup_control_router)
+
 # Repositories
 settings_repo = BotSettingsRepo(db)
 alerts_repo = BotAlertsRepo(db)
