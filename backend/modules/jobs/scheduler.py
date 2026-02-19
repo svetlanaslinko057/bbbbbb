@@ -95,3 +95,11 @@ def start_jobs_scheduler(db):
 
     scheduler.start()
     logger.info("Jobs scheduler started: tracking (15min), notifications (30s), alerts (15s), automation (10min)")
+    
+    # O13-O18: Start Guard + Analytics scheduler
+    try:
+        from modules.jobs.guard_scheduler import start_guard_scheduler
+        start_guard_scheduler(db)
+        logger.info("Guard + Analytics scheduler started: guard (10min), analytics daily (02:10 UTC)")
+    except Exception as e:
+        logger.error(f"Guard scheduler failed to start: {e}")
