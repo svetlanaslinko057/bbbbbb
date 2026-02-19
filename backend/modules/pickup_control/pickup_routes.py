@@ -1,9 +1,9 @@
 """
-O20: Pickup Control Routes - Admin API endpoints
+O20.2: Pickup Control Routes - Admin API endpoints (Extended)
 """
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from core.db import db
 from core.security import get_current_admin
@@ -11,6 +11,223 @@ from modules.pickup_control.pickup_repo import PickupRepo
 from modules.pickup_control.pickup_engine import PickupControlEngine
 
 router = APIRouter(prefix="/pickup-control", tags=["Pickup Control"])
+
+
+# ============= O20.2: NEW ENDPOINTS =============
+
+@router.get("/summary")
+async def get_pickup_summary(current_user: dict = Depends(get_current_admin)):
+    """
+    O20.2: Get pickup control summary KPIs
+    Returns: days2plus, days5plus, days7plus, amount_at_risk_7plus
+    """
+    orders = db["orders"]
+    
+    def base_query(days: int):
+        return {
+            "shipment.daysAtPoint": {"$gte": days},
+            "status": {"$in": ["SHIPPED", "shipped", "PROCESSING", "processing"]}
+        }
+    
+    days2 = await orders.count_documents(base_query(2))
+    days5 = await orders.count_documents(base_query(5))
+    days7 = await orders.count_documents(base_query(7))
+    
+    # Calculate amount at risk (7+ days)
+    cursor = orders.find(base_query(7), {"totals.grand": 1, "total_amount": 1, "_id": 0})
+    amount = 0
+    async for o in cursor:
+        amt = float((o.get("totals") or {}).get("grand") or o.get("total_amount") or 0)
+        amount += amt
+    
+    return {
+        "days2plus": days2,
+        "days5plus": days5,
+        "days7plus": days7,
+        "amount_at_risk_7plus": round(amount, 2)
+    }
+
+
+@router.post("/send")
+async def manual_send_reminder(
+    body: dict,
+    current_user: dict = Depends(get_current_admin)
+):
+    """
+    O20.2: Manual send reminder for specific TTN
+    Body: {"ttn": "2045...", "level": "D5"}
+    Respects cooldown and dedupe
+    """
+    ttn = body.get("ttn")
+    level = body.get("level")
+    
+    if not ttn or not level:
+        raise HTTPException(status_code=400, detail="ttn and level required")
+    
+    # Find order
+    order = await db["orders"].find_one({"shipment.ttn": ttn}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    repo = PickupRepo(db)
+    
+    # Check cooldown
+    reminders = (order.get("reminders") or {}).get("pickup") or {}
+    cooldown_until = reminders.get("cooldownUntil")
+    if cooldown_until:
+        try:
+            cooldown_dt = datetime.fromisoformat(cooldown_until.replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) < cooldown_dt:
+                return {"ok": False, "reason": "cooldown_active", "until": cooldown_until}
+        except:
+            pass
+    
+    # Get phone
+    delivery = order.get("delivery") or {}
+    recipient = delivery.get("recipient") or {}
+    phone = recipient.get("phone") or order.get("buyer_phone")
+    
+    if not phone:
+        return {"ok": False, "reason": "no_phone"}
+    
+    # Dedupe check
+    dedupe_key = f"pickup:{ttn}:MANUAL:{level}"
+    existing = await db["notification_outbox"].find_one({"dedupe_key": dedupe_key})
+    if existing:
+        return {"ok": False, "reason": "duplicate", "dedupe_key": dedupe_key}
+    
+    # Get SMS template
+    from modules.pickup_control.pickup_templates import sms_pickup_template
+    days_at = (order.get("shipment") or {}).get("daysAtPoint") or 0
+    text = sms_pickup_template(level, ttn, order_id=order.get("id"), days=int(days_at))
+    
+    # Enqueue SMS
+    now = datetime.now(timezone.utc)
+    await db["notification_outbox"].insert_one({
+        "channel": "sms",
+        "recipient": phone,
+        "text": text,
+        "status": "pending",
+        "created_at": now.isoformat(),
+        "dedupe_key": dedupe_key,
+        "meta": {
+            "order_id": order.get("id"),
+            "ttn": ttn,
+            "level": level,
+            "manual": True,
+            "sent_by": current_user.get("email", "admin")
+        }
+    })
+    
+    # Mark reminder sent
+    sent_levels = reminders.get("sentLevels") or []
+    if level not in sent_levels:
+        sent_levels.append(level)
+    
+    await db["orders"].update_one(
+        {"shipment.ttn": ttn},
+        {"$set": {
+            "reminders.pickup.sentLevels": sent_levels,
+            "reminders.pickup.lastSentAt": now.isoformat()
+        }}
+    )
+    
+    # Timeline event
+    await db["timeline_events"].insert_one({
+        "phone": phone,
+        "ts": now.isoformat(),
+        "type": "PICKUP_REMINDER_SENT_MANUAL",
+        "title": "📩 Ручне нагадування",
+        "description": f"Manual reminder {level} для ТТН {ttn}",
+        "payload": {"ttn": ttn, "level": level, "sent_by": current_user.get("email", "admin")},
+        "created_at": now.isoformat()
+    })
+    
+    return {"ok": True, "ttn": ttn, "level": level, "phone": phone}
+
+
+@router.post("/mute")
+async def mute_ttn_reminder(
+    body: dict,
+    current_user: dict = Depends(get_current_admin)
+):
+    """
+    O20.2: Mute reminders for TTN
+    Body: {"ttn": "2045...", "hours": 168}
+    """
+    ttn = body.get("ttn")
+    hours = int(body.get("hours", 168))  # Default 7 days
+    
+    if not ttn:
+        raise HTTPException(status_code=400, detail="ttn required")
+    
+    until = datetime.now(timezone.utc) + timedelta(hours=hours)
+    
+    result = await db["orders"].update_one(
+        {"shipment.ttn": ttn},
+        {"$set": {"reminders.pickup.cooldownUntil": until.isoformat()}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Timeline event
+    order = await db["orders"].find_one({"shipment.ttn": ttn}, {"delivery.recipient.phone": 1})
+    phone = ((order.get("delivery") or {}).get("recipient") or {}).get("phone") if order else None
+    if phone:
+        await db["timeline_events"].insert_one({
+            "phone": phone,
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "type": "PICKUP_MUTED",
+            "title": "🔕 Нагадування заглушено",
+            "description": f"TTN {ttn} muted на {hours}h",
+            "payload": {"ttn": ttn, "hours": hours, "muted_by": current_user.get("email", "admin")},
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    
+    return {"ok": True, "ttn": ttn, "muted_until": until.isoformat()}
+
+
+@router.post("/unmute")
+async def unmute_ttn_reminder(
+    body: dict,
+    current_user: dict = Depends(get_current_admin)
+):
+    """
+    O20.2: Unmute reminders for TTN
+    Body: {"ttn": "2045..."}
+    """
+    ttn = body.get("ttn")
+    
+    if not ttn:
+        raise HTTPException(status_code=400, detail="ttn required")
+    
+    result = await db["orders"].update_one(
+        {"shipment.ttn": ttn},
+        {"$unset": {"reminders.pickup.cooldownUntil": ""}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    return {"ok": True, "ttn": ttn}
+
+
+@router.get("/find")
+async def find_by_ttn(
+    ttn: str,
+    current_user: dict = Depends(get_current_admin)
+):
+    """
+    O20.2: Find order by TTN
+    """
+    order = await db["orders"].find_one({"shipment.ttn": ttn}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
+
+
+# ============= EXISTING ENDPOINTS (UPDATED) =============
 
 
 @router.get("/risk")
