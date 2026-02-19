@@ -139,10 +139,10 @@ const OrdersAnalytics = () => {
       {/* Header with Filters */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Детальная статистика заказов</h2>
+          <h2 className="text-2xl font-bold">Детальна статистика замовлень</h2>
           <Button onClick={exportToCSV} variant="outline">
             <Download className="w-4 h-4 mr-2" />
-            Экспорт CSV
+            Експорт CSV
           </Button>
         </div>
 
@@ -155,10 +155,10 @@ const OrdersAnalytics = () => {
               onChange={(e) => setFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
-              <option value="all">Все время</option>
-              <option value="today">Сегодня</option>
-              <option value="week">Последняя неделя</option>
-              <option value="month">Последний месяц</option>
+              <option value="all">Весь час</option>
+              <option value="today">Сьогодні</option>
+              <option value="week">Останній тиждень</option>
+              <option value="month">Останній місяць</option>
             </select>
           </div>
 
@@ -170,7 +170,7 @@ const OrdersAnalytics = () => {
               onChange={(e) => setCategoryFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
-              <option value="all">Все категории</option>
+              <option value="all">Усі категорії</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.name}>{cat.name}</option>
               ))}
@@ -187,7 +187,7 @@ const OrdersAnalytics = () => {
               <DollarSign className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Выручка</p>
+              <p className="text-sm text-gray-600">Виручка</p>
               <p className="text-2xl font-bold">${totalRevenue.toFixed(2)}</p>
             </div>
           </div>
@@ -199,7 +199,7 @@ const OrdersAnalytics = () => {
               <Package className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Заказов</p>
+              <p className="text-sm text-gray-600">Замовлень</p>
               <p className="text-2xl font-bold">{totalOrders}</p>
             </div>
           </div>
@@ -211,7 +211,7 @@ const OrdersAnalytics = () => {
               <Package className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Товаров продано</p>
+              <p className="text-sm text-gray-600">Товарів продано</p>
               <p className="text-2xl font-bold">{totalItems}</p>
             </div>
           </div>
@@ -223,7 +223,7 @@ const OrdersAnalytics = () => {
               <User className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Покупателей</p>
+              <p className="text-sm text-gray-600">Покупців</p>
               <p className="text-2xl font-bold">{uniqueCustomers}</p>
             </div>
           </div>
@@ -233,16 +233,16 @@ const OrdersAnalytics = () => {
       {/* Category Statistics */}
       <div className="bg-white rounded-2xl border border-gray-200">
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-xl font-bold">Статистика по категориям</h3>
+          <h3 className="text-xl font-bold">Статистика за категоріями</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Категория</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Заказов</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Количество</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Выручка</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Категорія</th>
+                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Замовлень</th>
+                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Кількість</th>
+                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Виручка</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -266,17 +266,17 @@ const OrdersAnalytics = () => {
       {/* Orders Table */}
       <div className="bg-white rounded-2xl border border-gray-200">
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-xl font-bold">Детальная информация о заказах</h3>
+          <h3 className="text-xl font-bold">Детальна інформація про замовлення</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Дата</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Покупатель</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Товары</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Количество</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Сумма</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Покупець</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Товари</th>
+                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Кількість</th>
+                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Сума</th>
                 <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Статус</th>
               </tr>
             </thead>
