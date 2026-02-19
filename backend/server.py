@@ -3614,6 +3614,10 @@ app.include_router(risk_router, prefix="/api/v2/admin", tags=["Risk Score"])
 app.include_router(timeline_router, prefix="/api/v2/admin", tags=["Customer Timeline"])
 app.include_router(analytics_router, prefix="/api/v2/admin", tags=["Analytics Intelligence"])
 
+# O20: Pickup Control router
+from modules.pickup_control.pickup_routes import router as pickup_control_router
+app.include_router(pickup_control_router, prefix="/api/v2/admin", tags=["Pickup Control"])
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
