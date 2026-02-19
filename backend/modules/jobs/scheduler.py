@@ -103,3 +103,11 @@ def start_jobs_scheduler(db):
         logger.info("Guard + Analytics scheduler started: guard (10min), analytics daily (02:10 UTC)")
     except Exception as e:
         logger.error(f"Guard scheduler failed to start: {e}")
+
+    # O20: Start Pickup Control scheduler
+    try:
+        from modules.pickup_control.pickup_scheduler import start_pickup_control_scheduler
+        start_pickup_control_scheduler(db, np_service=None)
+        logger.info("Pickup Control scheduler started (every 30 min)")
+    except Exception as e:
+        logger.error(f"Pickup Control scheduler failed to start: {e}")
