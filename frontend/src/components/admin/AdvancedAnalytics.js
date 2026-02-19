@@ -91,9 +91,9 @@ const AdvancedAnalytics = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold text-gray-900">Расширенная Аналитика</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Розширена Аналітика</h2>
         <Button onClick={fetchAllAnalytics} variant="outline">
-          Обновить данные
+          Оновити дані
         </Button>
       </div>
 
@@ -110,11 +110,11 @@ const AdvancedAnalytics = () => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              {tab === 'overview' && '📊 Обзор'}
-              {tab === 'products' && '📦 Товары'}
-              {tab === 'customers' && '👥 Покупатели'}
-              {tab === 'time' && '📅 По времени'}
-              {tab === 'user-behavior' && '⏱️ Поведение'}
+              {tab === 'overview' && '📊 Огляд'}
+              {tab === 'products' && '📦 Товари'}
+              {tab === 'customers' && '👥 Покупці'}
+              {tab === 'time' && '📅 За часом'}
+              {tab === 'user-behavior' && '⏱️ Поведінка'}
             </button>
           ))}
         </div>
@@ -130,13 +130,13 @@ const AdvancedAnalytics = () => {
                 <Eye className="w-8 h-8 opacity-80" />
                 <TrendingUp className="w-5 h-5" />
               </div>
-              <p className="text-sm opacity-90 mb-1">Посещений (30 дней)</p>
+              <p className="text-sm opacity-90 mb-1">Відвідувань (30 днів)</p>
               <p className="text-4xl font-bold">{visits.total_page_views || visits.total_visits || 0}</p>
               <p className="text-sm opacity-75 mt-2">
-                Уникальных: {visits.unique_visitors || 0}
+                Унікальних: {visits.unique_visitors || 0}
               </p>
               <p className="text-xs opacity-70 mt-1">
-                Среднее время: {visits.avg_session_duration ? `${Math.floor(visits.avg_session_duration / 60)}м ${Math.round(visits.avg_session_duration % 60)}с` : 'N/A'}
+                Середній час: {visits.avg_session_duration ? `${Math.floor(visits.avg_session_duration / 60)}хв ${Math.round(visits.avg_session_duration % 60)}с` : 'N/A'}
               </p>
             </div>
 
@@ -145,10 +145,10 @@ const AdvancedAnalytics = () => {
                 <ShoppingCart className="w-8 h-8 opacity-80" />
                 <AlertCircle className="w-5 h-5" />
               </div>
-              <p className="text-sm opacity-90 mb-1">Брошенные корзины</p>
+              <p className="text-sm opacity-90 mb-1">Покинуті кошики</p>
               <p className="text-4xl font-bold">{abandonedCarts.total_abandoned}</p>
               <p className="text-sm opacity-75 mt-2">
-                На сумму: ${abandonedCarts.total_value.toFixed(2)}
+                На суму: ${abandonedCarts.total_value.toFixed(2)}
               </p>
             </div>
 
@@ -157,10 +157,10 @@ const AdvancedAnalytics = () => {
                 <Heart className="w-8 h-8 opacity-80" />
                 <Target className="w-5 h-5" />
               </div>
-              <p className="text-sm opacity-90 mb-1">В избранном</p>
+              <p className="text-sm opacity-90 mb-1">В обраному</p>
               <p className="text-4xl font-bold">{wishlistData.total_products}</p>
               <p className="text-sm opacity-75 mt-2">
-                Потенциал: ${wishlistData.potential_revenue.toFixed(2)}
+                Потенціал: ${wishlistData.potential_revenue.toFixed(2)}
               </p>
             </div>
 
@@ -169,24 +169,24 @@ const AdvancedAnalytics = () => {
                 <Target className="w-8 h-8 opacity-80" />
                 <ArrowUp className="w-5 h-5" />
               </div>
-              <p className="text-sm opacity-90 mb-1">Конверсия</p>
+              <p className="text-sm opacity-90 mb-1">Конверсія</p>
               <p className="text-4xl font-bold">
                 {conversionFunnel.overall_conversion?.toFixed(1) || 0}%
               </p>
               <p className="text-sm opacity-75 mt-2">
-                Посетитель → Покупка
+                Відвідувач → Покупка
               </p>
             </div>
           </div>
 
           {/* Conversion Funnel */}
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
-            <h3 className="text-xl font-bold mb-6">Воронка Конверсии</h3>
+            <h3 className="text-xl font-bold mb-6">Воронка Конверсії</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium">👥 Всего пользователей</span>
+                    <span className="font-medium">👥 Усього користувачів</span>
                     <span className="font-bold text-xl">{conversionFunnel.total_users}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-4">
