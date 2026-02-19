@@ -3608,6 +3608,12 @@ app.include_router(finance_router, prefix="/api/v2/admin", tags=["Finance"])
 app.include_router(crm_router, prefix="/api/v2/admin", tags=["CRM"])
 app.include_router(crm_actions_router, prefix="/api/v2/admin", tags=["CRM Actions"])
 
+# O13-O18: Include Guard, Risk, Timeline, Analytics routers
+app.include_router(guard_router, prefix="/api/v2/admin", tags=["Guard (Fraud/KPI)"])
+app.include_router(risk_router, prefix="/api/v2/admin", tags=["Risk Score"])
+app.include_router(timeline_router, prefix="/api/v2/admin", tags=["Customer Timeline"])
+app.include_router(analytics_router, prefix="/api/v2/admin", tags=["Analytics Intelligence"])
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
