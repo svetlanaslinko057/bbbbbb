@@ -31,6 +31,9 @@ from modules.bot.wizards.incidents_wizard import IncidentsWizard
 
 from modules.automation.automation_engine import AutomationEngine
 
+# O20.2: Pickup Control Handler
+from modules.bot.handlers.pickup_control_handler import router as pickup_control_router
+
 # Configure logging - DEBUG level for troubleshooting
 logging.basicConfig(
     level=logging.DEBUG,
