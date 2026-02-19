@@ -452,11 +452,11 @@ const AdvancedAnalytics = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Покупатель</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Заказов</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Всего потрачено</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Средний чек</th>
-                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Последний заказ</th>
+                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Покупець</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Замовлень</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Усього витрачено</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Середній чек</th>
+                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Останнє замовлення</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -497,7 +497,7 @@ const AdvancedAnalytics = () => {
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border border-gray-200">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold">📅 Анализ по месяцам</h3>
+              <h3 className="text-xl font-bold">📅 Аналіз за місяцями</h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
@@ -507,7 +507,7 @@ const AdvancedAnalytics = () => {
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm text-gray-600">
-                          {month.orders} заказов
+                          {month.orders} замовлень
                         </span>
                         <span className="font-bold text-green-600">
                           ${month.revenue.toFixed(2)}
