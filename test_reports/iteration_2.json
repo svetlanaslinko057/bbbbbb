@@ -30,7 +30,7 @@
   "test_report_links": ["/app/backend_test.py"],
   "success_percentage": "backend: 100% (5/5 pickup control APIs tested), all O20 module functionality working",
   "updated_files": ["/app/backend_test.py"],
-  "action_item_for_main_agent": "External API routing issue persists: REACT_APP_BACKEND_URL (https://jjjjjjjj-uvmgh.preview.emergentagent.com) returns 404 for all /api/* endpoints. Internal APIs work perfectly on localhost:8001. This prevents frontend from accessing backend APIs. The pickup control backend implementation is complete and functional.",
+  "action_item_for_main_agent": "External API routing issue persists: REACT_APP_BACKEND_URL (https://ecommerce-ops-panel.preview.emergentagent.com) returns 404 for all /api/* endpoints. Internal APIs work perfectly on localhost:8001. This prevents frontend from accessing backend APIs. The pickup control backend implementation is complete and functional.",
   "should_call_test_agent_after_fix": "false",
   "should_main_agent_test_itself": "false"
 }

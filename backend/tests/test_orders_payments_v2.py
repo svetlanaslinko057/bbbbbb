@@ -13,7 +13,7 @@ import uuid
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
-    BASE_URL = "https://tg-admin-hub-1.preview.emergentagent.com"
+    BASE_URL = "https://ecommerce-ops-panel.preview.emergentagent.com"
 
 # Test credentials from requirements
 TEST_USER_EMAIL = "test@example.com"

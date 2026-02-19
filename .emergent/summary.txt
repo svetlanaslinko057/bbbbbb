@@ -1,0 +1,175 @@
+<analysis>**original_problem_statement:**
+The user requested to set up a full-stack e-commerce application from a provided GitHub repository (). The initial goal was to get the project running (frontend, backend, DB) and study the existing code.
+
+The user then provided an extensive, multi-stage plan to add significant new functionality, turning the application into an enterprise-level operational tool.
+
+**PRODUCT REQUIREMENTS (O13-O20):**
+- **O13: Permissions & Multi-Admin:** Implement a role-based access system (OWNER, OPERATOR, VIEWER) for the Telegram bot, with audit logs and a quiet mode.
+- **O14: Financial & Fraud Guard:** Create a system for KPI alerts (e.g., revenue drops) and anti-fraud rules (e.g., order bursts).
+- **O15: Customer Profile Card:** Develop a mini-CRM within the Telegram bot to display a customer's profile, LTV, order history, and allow for quick actions.
+- **O16: Customer Risk Score Engine:** Implement a service to calculate a risk score (0-100) for each customer based on their behavior (returns, refusals).
+- **O17: Customer Timeline:** Create a unified event stream for each customer, showing orders, payments, notes, and alerts in chronological order.
+- **O18: Analytics Intelligence Layer:** Build a backend analytics engine to calculate and store daily snapshots of KPIs, funnels, cohorts, LTV, and retention.
+- **O19: Web Admin Analytics UI:** Create a web-based admin dashboard with charts and tables to visualize the analytics data.
+- **O20: Return & Pickup Control Engine:** Develop a system to track shipments with Nova Poshta, automatically send pickup reminders to customers via SMS, and alert admins about at-risk parcels to reduce returns.
+
+**User's preferred language**: українська (Ukrainian). The user has explicitly requested that all new UI elements be in Ukrainian. The next agent MUST respond and code in Ukrainian.
+
+**what currently exists?**
+A full-stack e-commerce application (FastAPI backend, React frontend, MongoDB) has been successfully cloned and set up. The environment is running with the user's API keys for Telegram and Nova Poshta.
+
+A vast number of features from the user's roadmap (O13 through O20.2) have been implemented on the backend, including modules for permissions, fraud detection, risk scoring, analytics, and pickup control. Skeletons for the corresponding frontend admin pages and components have also been created. Backend APIs have been tested and are functional. The Telegram bot is running.
+
+**Last working item**:
+-   **Last item agent was working:** The agent was in the process of fulfilling the user's request to translate all newly created frontend admin components from Russian to Ukrainian and to fix an admin login issue. The translation was partially completed across several files.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent and screenshot tool to verify UI translations and fixes. Backend testing agent to re-validate the complete authentication flow.
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+-   Issue 1: Admin login is not working (P0)
+-   Issue 2: Complete translation of new UI to Ukrainian (P0)
+-   Issue 3: Remove the map component from the admin dashboard (P1)
+-   Issue 4: Clarify and implement the separation of Admin/User logic in the UI (P2)
+
+**Issues Detail:**
+-   **Issue 1: Admin login is not working**
+    -   **Attempted fixes:** The agent confirmed the  user and role exist in the database and that the backend JWT authentication logic is correct. The agent suspected a frontend race condition or a platform-related preview URL issue and provided the correct credentials and link to the user. The issue persists from the user's perspective.
+    -   **Next debug checklist:**
+        1.  Verify the login flow using the  to simulate admin login and check for successful redirection to .
+        2.  Use the  tool on the login page after a failed attempt to capture any console errors.
+        3.  Review  and . The check  might be firing before the user state is hydrated from . A potential fix is to handle the loading state within  and render a loading spinner until the user's auth status is confirmed.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical blocker. The user cannot access any of the newly built admin functionality.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** None
+
+-   **Issue 2: Complete translation of new UI to Ukrainian**
+    -   **Where to resume:** Continue translating all string literals in the newly created JSX files under  and . Systematically search for Russian text and replace it with the Ukrainian equivalent.
+    -   **What will be achieved with this?** The application's UI will be consistent and meet the user's explicit language requirements.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on something:** None
+
+-   **Issue 3: Remove the map component from the admin dashboard**
+    -   **Attempted fixes:** None.
+    -   **Next debug checklist:**
+        1.  Identify the file in  that renders the map.
+        2.  Remove the map component and any associated state or logic from the file.
+    -   **Why fix this issue and what will be achieved with the fix?** Fulfills a direct user request to declutter the admin UI.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** None
+
+-   **Issue 4: Clarify and implement the separation of Admin/User logic in the UI**
+    -   **Attempted fixes:** None.
+    -   **Next debug checklist:** The request is ambiguous. The agent should ask for clarification before proceeding. Example question:  (To better understand, please clarify which UI elements you find inappropriate in the admin panel, besides the map? Perhaps there are specific blocks or pages that need to be moved or hidden?).
+    -   **Why fix this issue and what will be achieved with the fix?** Improves UI/UX according to the user's vision.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** Needs user input.
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **(P1) O19 - Flesh out Admin Analytics UI:** The current UI components are skeletons. They need to be fully implemented with  to display the data from the analytics API endpoints ().
+    -   **(P2) O20.3 — Return Management Engine:** The user has already outlined the next step, which involves adding smarter segmentation to the reminder engine (e.g., more aggressive for COD orders) and potentially an auto-cancel policy.
+
+-   **Future Tasks:**
+    -   Based on the user's roadmap, future work could include more advanced analytics (Revenue Intelligence) and a Customer Timeline view in the admin UI.
+
+**Completed work in this session**
+-   Project setup from GitHub, including environment configuration with user-provided API keys.
+-   **O13: Permissions & Multi-Admin:** Implemented a full role-based access system for the Telegram bot with audit logs and quiet mode (, , etc.).
+-   **O14: Financial & Fraud Guard:** Created a backend engine and scheduler for KPI and anti-fraud alerts ().
+-   **O15: Customer Profile Card (Mini-CRM):** Implemented the backend service and API to display a customer's profile in the bot ().
+-   **O16: Customer Risk Score Engine:** Built a service to calculate and store a risk score for each customer ().
+-   **O17: Customer Timeline:** Implemented the backend service to aggregate a customer's event history ().
+-   **O18: Analytics Intelligence Layer:** Created a backend engine to generate and store daily analytics snapshots ().
+-   **O19: Web Admin Analytics UI (Skeletons):** Created placeholder pages and components for the admin dashboard (, etc.).
+-   **O20.1 & O20.2: Return & Pickup Control Engine:** Implemented a complete backend module to track Nova Poshta shipments, send pickup reminders, and alert admins (). Created a placeholder UI page.
+-   **Testing:** Ran extensive backend tests via the testing agent for all new APIs, with all tests passing.
+-   **Verification:** Confirmed the Telegram bot () and Nova Poshta API integration are working correctly.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Preview URL instability:** The preview environment URL was noted to be intermittently unavailable (sleeping). This is a platform behavior and not an application bug. The agent should be aware that this might require waking the preview by visiting the URL.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Backend:** FastAPI, Python, MongoDB (),  for scheduled jobs.
+-   **Frontend:** React, Next.js, , .
+-   **Authentication:** JWT with role-based access control (, , ).
+-   **Integrations:** Telegram Bot (), Nova Poshta API.
+
+**key DB schema**
+-   **orders:** Core order data, now extended with  (TTN, , ) and  (sent levels, cooldowns).
+-   **customers:** Customer data, now extended with  (score, band, reasons), , and .
+-   **bot_admins:** Telegram bot administrators and their roles.
+-   **bot_audit_log:** Log of all admin actions within the bot.
+-   **guard_incidents:** Records for triggered fraud/financial alerts.
+-   **analytics_daily:** Daily pre-aggregated analytics snapshots for fast lookups.
+-   **timeline_events:** A new collection to store the unified customer event stream.
+-   **notification_outbox:** Queue for outgoing SMS/email notifications.
+
+**All files of reference**
+-   : Main application file, updated to include all new API routers.
+-   : Central scheduler, updated to run jobs for all new modules (, , , ).
+-   All new files created in  and  for features O13-O20.
+
+**Critical Info for New Agent**
+-   The user's roadmap (O13-O20) is the primary source of truth for all recent and upcoming work. Refer to the chat history for the detailed plans.
+-   The user is blocked by the admin login issue. Resolving this is the highest priority.
+-   All new UI development and communication must be in **Ukrainian**.
+-   The project has two distinct admin interfaces: the web panel (login via email/password) and the Telegram bot (login via  command, which registers the user's Telegram ID).
+-   The Nova Poshta API key  is correctly configured in .
+
+**documents and test reports created in this job**
+-   
+-   
+-   
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User:** Requested all new logic be in Ukrainian, remove the map from admin UI, and separate admin/user logic. (PENDING)
+2.  **User:** Asked for the correct preview URL. (Resolved)
+3.  **User:** Stated the preview link was wrong and provided another. (Resolved)
+4.  **User:** Asked for the correct preview URL again. (Resolved)
+5.  **User:** Reported an error when trying to log in as admin. (PENDING)
+6.  **User:** Asked to verify the Nova Poshta key usage, bot status, and explain the admin authorization logic. (Partially Resolved)
+7.  **User:** Approved starting work on O20.2 (Pickup Control UI/Bot). (Completed)
+8.  **User:** Approved starting work on O20.1 (Pickup Control Backend). (Completed)
+9.  **User:** Asked for a deeper design of the Pickup Control feature. (Completed)
+10. **User:** Approved starting work on O19 (Web Admin Analytics UI). (Completed - Skeletons)
+
+**Project Health Check:**
+-   **Broken:**
+    -   Admin login flow is not working for the user.
+    -   Preview environment URL is intermittently unavailable due to the platform's sleep feature.
+-   **Mocked:** None.
+
+**3rd Party Integrations**
+-   **Nova Poshta API:** Used for shipment tracking. Requires a User API Key (already provided and configured).
+-   **Telegram API:** Used for the admin bot. Requires a User API Key (already provided and configured).
+
+**Testing status**
+-   **Testing agent used after significant changes:** YES. The backend APIs for features O13-O20 were tested and passed.
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None.
+-   **Known regressions:** The admin login functionality is not working for the user.
+
+**Credentials to test flow:**
+-   **Web Admin Panel:**
+    -   Email: 
+    -   Password: 
+-   **Telegram Bot:**
+    -   Bot Name: 
+    -   Access: The first user to message  is automatically designated as the .
+
+**What agent forgot to execute**
+-   The agent did not fully complete the translation of all new UI components to Ukrainian.
+-   The agent did not start the work to remove the map from the admin panel or to address the broader separate user/admin logic request.
+-   The implementation of the O19 Admin Analytics UI is only a skeleton. It needs to be fully built out with  to be functional.</analysis>
