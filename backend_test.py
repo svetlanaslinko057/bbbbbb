@@ -22,7 +22,20 @@ load_dotenv('/app/frontend/.env')
 
 class YStoreAPITester:
     def __init__(self, base_url=None):
-        self.base_url = base_url or os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:3000')
+        # Use localhost as fallback since external routing seems to have issues
+        if base_url is None:
+            external_url = os.environ.get('REACT_APP_BACKEND_URL', '')
+            if external_url:
+                # Try external first, fallback to localhost
+                self.base_url = external_url
+                self.fallback_url = 'http://localhost:8001'
+            else:
+                self.base_url = 'http://localhost:8001'
+                self.fallback_url = None
+        else:
+            self.base_url = base_url
+            self.fallback_url = None
+            
         self.admin_token = None
         self.tests_run = 0
         self.tests_passed = 0
