@@ -24,14 +24,13 @@ class YStoreAPITester:
     def __init__(self, base_url=None):
         self.base_url = base_url or os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:3000')
         self.admin_token = None
-        self.user_token = None
         self.tests_run = 0
         self.tests_passed = 0
         
         # Test credentials from review request
-        self.admin_email = "admin@bazaar.com"
+        self.admin_email = "admin@ystore.ua"
         self.admin_password = "admin123"
-        self.test_order_id = "205ff7e6-76dd-4929-864f-0f6ccde8289a"
+        self.test_user_id = "test-user-123"  # For timeline testing
 
     def log_result(self, name, success, details=""):
         """Log test result"""
