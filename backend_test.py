@@ -515,6 +515,13 @@ class YStoreAPITester:
         self.test_analytics_ops_kpi()
         self.test_analytics_daily_rebuild()
         
+        # Test O20 Pickup Control module
+        self.test_pickup_control_kpi()
+        self.test_pickup_control_risk_list()
+        self.test_pickup_control_run_engine()
+        self.test_pickup_control_mute_ttn()
+        self.test_pickup_control_send_reminder()
+        
         print("\n" + "=" * 60)
         print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")
         print("=" * 60)
