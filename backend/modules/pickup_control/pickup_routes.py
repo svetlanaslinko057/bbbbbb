@@ -232,16 +232,37 @@ async def find_by_ttn(
 
 @router.get("/risk")
 async def get_risk_list(
-    days: int = 7, 
-    limit: int = 100,
+    days: int = 7,
+    skip: int = 0,
+    limit: int = 20,
     current_user: dict = Depends(get_current_admin)
 ):
-    """Get list of shipments at pickup point for N+ days"""
-    repo = PickupRepo(db)
-    items = await repo.list_risk_shipments(min_days=days, limit=limit)
+    """
+    O20.2: Get list of shipments at pickup point for N+ days
+    With pagination: skip, limit
+    Sorted by daysAtPoint desc, then by amount desc
+    """
+    query = {
+        "shipment.daysAtPoint": {"$gte": days},
+        "status": {"$in": ["SHIPPED", "shipped", "PROCESSING", "processing"]}
+    }
+    
+    cursor = db["orders"].find(query, {"_id": 0}) \
+        .sort([
+            ("shipment.daysAtPoint", -1),
+            ("totals.grand", -1)
+        ]) \
+        .skip(skip) \
+        .limit(limit)
+    
+    items = [item async for item in cursor]
+    total = await db["orders"].count_documents(query)
+    
     return {
         "items": items,
-        "count": len(items),
+        "total": total,
+        "skip": skip,
+        "limit": limit,
         "filter_days": days
     }
 
