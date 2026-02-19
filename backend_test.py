@@ -499,7 +499,7 @@ class YStoreAPITester:
 
     def run_all_tests(self):
         """Run all test scenarios"""
-        print("🚀 Starting Y-Store O13-O18 Module Tests")
+        print("🚀 Starting Y-Store O13-O20 Module Tests")
         print("=" * 60)
         
         # Basic connectivity and authentication
