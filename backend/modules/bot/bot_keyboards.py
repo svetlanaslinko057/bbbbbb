@@ -17,6 +17,8 @@ def main_menu():
             [KeyboardButton(text="📦 Замовлення"), KeyboardButton(text="🚚 Доставки")],
             [KeyboardButton(text="👤 CRM"), KeyboardButton(text="💰 Фінанси")],
             [KeyboardButton(text="📦 Майстер ТТН"), KeyboardButton(text="📣 Розсилка")],
+            [KeyboardButton(text="📮 Повернення"), KeyboardButton(text="⚠️ Ризики")],
+            [KeyboardButton(text="📈 Аналітика"), KeyboardButton(text="🛡️ Guard")],
             [KeyboardButton(text="🧯 Інциденти"), KeyboardButton(text="⚙️ Налаштування")]
         ],
         resize_keyboard=True
