@@ -200,29 +200,29 @@ const AnalyticsDashboard = () => {
 
       {/* User Growth */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
-        <h3 className="text-xl font-bold mb-4">Рост пользователей (30 дней)</h3>
+        <h3 className="text-xl font-bold mb-4">Зростання користувачів (30 днів)</h3>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={userGrowth}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="count" fill="#8884d8" name="Новые пользователи" />
+            <Bar dataKey="count" fill="#8884d8" name="Нові користувачі" />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* Top Sellers */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
-        <h3 className="text-xl font-bold mb-4">Топ продавцы</h3>
+        <h3 className="text-xl font-bold mb-4">Топ продавці</h3>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b">
                 <th className="text-left py-3 px-4">Ранг</th>
-                <th className="text-left py-3 px-4">Продавец</th>
-                <th className="text-right py-3 px-4">Доход</th>
-                <th className="text-right py-3 px-4">Заказы</th>
+                <th className="text-left py-3 px-4">Продавець</th>
+                <th className="text-right py-3 px-4">Дохід</th>
+                <th className="text-right py-3 px-4">Замовлення</th>
               </tr>
             </thead>
             <tbody>
