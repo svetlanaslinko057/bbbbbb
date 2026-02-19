@@ -63,12 +63,12 @@ const AdminPanel = () => {
     e.preventDefault();
     try {
       await categoriesAPI.create(categoryForm);
-      toast.success('Категория добавлена!');
+      toast.success('Категорію додано!');
       setShowAddCategory(false);
       setCategoryForm({ name: '', slug: '' });
       fetchData();
     } catch (error) {
-      toast.error('Ошибка добавления категории');
+      toast.error('Помилка додавання категорії');
     }
   };
 
