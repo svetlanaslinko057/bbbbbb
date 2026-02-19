@@ -1,6 +1,6 @@
 /**
- * O20.2: Pickup Control Admin Page
- * Monitor and manage shipments at pickup points
+ * O20.2: Контроль отримання посилок
+ * Моніторинг та управління відправленнями на точках видачі
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -45,7 +45,7 @@ const PickupControl = () => {
         setKpi(data);
       }
     } catch (err) {
-      console.error('Load error:', err);
+      console.error('Помилка завантаження:', err);
     } finally {
       setLoading(false);
     }
@@ -129,11 +129,11 @@ const PickupControl = () => {
 
   return (
     <div className="space-y-6 p-6" data-testid="pickup-control">
-      {/* Header */}
+      {/* Заголовок */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Package className="w-7 h-7 text-purple-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Pickup Control</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Контроль отримання</h1>
         </div>
         <div className="flex items-center gap-4">
           <button
@@ -152,7 +152,7 @@ const PickupControl = () => {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI картки */}
       {kpi && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
@@ -194,7 +194,7 @@ const PickupControl = () => {
         </div>
       )}
 
-      {/* Filter */}
+      {/* Фільтр */}
       <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
         <div className="flex items-center gap-4">
           <Filter className="w-5 h-5 text-gray-400" />
@@ -213,7 +213,7 @@ const PickupControl = () => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Таблиця */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50">
