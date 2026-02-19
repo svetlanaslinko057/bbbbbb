@@ -344,6 +344,201 @@ async def menu_settings(message: types.Message):
     )
 
 
+# ============= O20: PICKUP CONTROL (Повернення) =============
+
+@dp.message(F.text == "📮 Повернення")
+async def menu_pickup_control(message: types.Message):
+    """Pickup control - at-risk parcels"""
+    from datetime import datetime, timezone, timedelta
+    
+    now = datetime.now(timezone.utc)
+    
+    # Get shipments at risk (days_at_point >= 3)
+    at_risk = await db["orders"].find(
+        {
+            "status": {"$in": ["SHIPPED", "shipped"]},
+            "shipment.days_at_point": {"$gte": 3}
+        },
+        {"_id": 0, "id": 1, "shipment": 1, "totals": 1, "total_amount": 1}
+    ).sort("shipment.days_at_point", -1).limit(10).to_list(10)
+    
+    if not at_risk:
+        await message.answer(
+            "📮 <b>Контроль повернень</b>\n\n"
+            "✅ Немає посилок з ризиком повернення!\n"
+            "Усі відправлення забирають вчасно.",
+            parse_mode="HTML"
+        )
+        return
+    
+    total_risk_amount = 0
+    text = "📮 <b>Контроль повернень</b>\n\n"
+    text += f"⚠️ <b>Посилок під ризиком: {len(at_risk)}</b>\n\n"
+    
+    for o in at_risk:
+        oid = o.get("id", "")[:8]
+        shipment = o.get("shipment") or {}
+        days = shipment.get("days_at_point", 0)
+        ttn = shipment.get("ttn", "-")
+        amount = float((o.get("totals") or {}).get("grand") or o.get("total_amount") or 0)
+        total_risk_amount += amount
+        
+        risk_emoji = "🔴" if days >= 5 else "🟡"
+        text += f"{risk_emoji} #{oid} | ТТН <code>{ttn}</code>\n"
+        text += f"   📅 Днів: {days} | 💰 {amount:.0f} грн\n"
+    
+    text += f"\n💰 <b>Під ризиком:</b> {total_risk_amount:,.0f} грн"
+    text += "\n\n💡 Використайте веб-панель для масової розсилки нагадувань."
+    
+    await message.answer(text, parse_mode="HTML")
+
+
+# ============= O16: RISK SCORE (Ризики) =============
+
+@dp.message(F.text == "⚠️ Ризики")
+async def menu_risk_scores(message: types.Message):
+    """Risk scores - high-risk customers"""
+    
+    # Get high-risk customers
+    high_risk = await db["users"].find(
+        {"risk.band": "RISK"},
+        {"_id": 0, "id": 1, "email": 1, "phone": 1, "full_name": 1, "risk": 1}
+    ).sort("risk.score", -1).limit(10).to_list(10)
+    
+    if not high_risk:
+        await message.answer(
+            "⚠️ <b>Ризикові клієнти</b>\n\n"
+            "✅ Немає клієнтів з високим ризиком!\n"
+            "Система аналізує повернення, відмови та платіжну поведінку.",
+            parse_mode="HTML"
+        )
+        return
+    
+    text = "⚠️ <b>Ризикові клієнти</b>\n\n"
+    text += f"🔴 <b>Знайдено: {len(high_risk)}</b>\n\n"
+    
+    for c in high_risk:
+        name = c.get("full_name") or c.get("email") or c.get("phone") or "Невідомий"
+        risk = c.get("risk") or {}
+        score = risk.get("score", 0)
+        reasons = ", ".join(risk.get("reasons", [])) or "-"
+        
+        text += f"🚨 <b>{name}</b>\n"
+        text += f"   Скор: {score}/100 | {reasons}\n"
+    
+    text += "\n💡 Деталі та дії - у веб-панелі CRM."
+    
+    await message.answer(text, parse_mode="HTML")
+
+
+# ============= O18: ANALYTICS (Аналітика) =============
+
+@dp.message(F.text == "📈 Аналітика")
+async def menu_analytics(message: types.Message):
+    """Analytics intelligence - daily KPIs"""
+    from datetime import datetime, timezone, timedelta
+    
+    today = datetime.now(timezone.utc).date().isoformat()
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).date().isoformat()
+    
+    # Get today's analytics
+    today_stats = await db["analytics_daily"].find_one({"date": today}, {"_id": 0})
+    yday_stats = await db["analytics_daily"].find_one({"date": yesterday}, {"_id": 0})
+    
+    # Fallback to real-time if no daily snapshot
+    if not today_stats:
+        # Calculate real-time
+        orders_today = await db["orders"].count_documents({
+            "created_at": {"$gte": today}
+        })
+        revenue_pipeline = [
+            {"$match": {"created_at": {"$gte": today}, "payment_status": {"$in": ["paid", "completed"]}}},
+            {"$group": {"_id": None, "total": {"$sum": "$total_amount"}}}
+        ]
+        rev_result = await db["orders"].aggregate(revenue_pipeline).to_list(1)
+        revenue_today = rev_result[0]["total"] if rev_result else 0
+        
+        customers_today = await db["users"].count_documents({
+            "created_at": {"$gte": today}
+        })
+        
+        today_stats = {
+            "orders": orders_today,
+            "revenue": revenue_today,
+            "new_customers": customers_today
+        }
+    
+    orders = today_stats.get("orders") or today_stats.get("orders_count", 0)
+    revenue = today_stats.get("revenue") or today_stats.get("revenue_total", 0)
+    customers = today_stats.get("new_customers", 0)
+    aov = revenue / orders if orders > 0 else 0
+    
+    # Yesterday comparison
+    yday_orders = (yday_stats.get("orders") or yday_stats.get("orders_count", 0)) if yday_stats else 0
+    yday_revenue = (yday_stats.get("revenue") or yday_stats.get("revenue_total", 0)) if yday_stats else 0
+    
+    orders_diff = ((orders - yday_orders) / yday_orders * 100) if yday_orders > 0 else 0
+    revenue_diff = ((revenue - yday_revenue) / yday_revenue * 100) if yday_revenue > 0 else 0
+    
+    orders_emoji = "📈" if orders_diff >= 0 else "📉"
+    revenue_emoji = "📈" if revenue_diff >= 0 else "📉"
+    
+    text = "📈 <b>Аналітика сьогодні</b>\n\n"
+    text += f"📦 <b>Замовлень:</b> {orders} {orders_emoji} {orders_diff:+.1f}%\n"
+    text += f"💰 <b>Виручка:</b> {revenue:,.0f} грн {revenue_emoji} {revenue_diff:+.1f}%\n"
+    text += f"🧾 <b>Середній чек:</b> {aov:,.0f} грн\n"
+    text += f"👥 <b>Нових клієнтів:</b> {customers}\n"
+    
+    text += "\n💡 Повна аналітика у веб-панелі."
+    
+    await message.answer(text, parse_mode="HTML")
+
+
+# ============= O14: GUARD (Fraud/KPI Alerts) =============
+
+@dp.message(F.text == "🛡️ Guard")
+async def menu_guard(message: types.Message):
+    """Guard - fraud & KPI alerts"""
+    
+    # Get open incidents
+    open_incidents = await db["guard_incidents"].find(
+        {"status": "OPEN"},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(10).to_list(10)
+    
+    if not open_incidents:
+        await message.answer(
+            "🛡️ <b>Guard - Захист</b>\n\n"
+            "✅ Немає відкритих інцидентів!\n\n"
+            "Система моніторить:\n"
+            "• 📉 Падіння конверсії/виручки\n"
+            "• 🔄 Підозрілі повернення\n"
+            "• ⚡ Burst замовлень\n"
+            "• 💳 Платіжні аномалії",
+            parse_mode="HTML"
+        )
+        return
+    
+    text = "🛡️ <b>Guard - Інциденти</b>\n\n"
+    text += f"🚨 <b>Відкрито: {len(open_incidents)}</b>\n\n"
+    
+    for inc in open_incidents[:5]:  # Show max 5
+        severity = inc.get("severity", "INFO")
+        sev_emoji = {"CRITICAL": "🔴", "WARNING": "🟡", "INFO": "🔵"}.get(severity, "⚪")
+        title = inc.get("title", "Incident")
+        inc_type = inc.get("type", "-")
+        
+        text += f"{sev_emoji} <b>{title}</b>\n"
+        text += f"   Тип: {inc_type}\n"
+    
+    if len(open_incidents) > 5:
+        text += f"\n... та ще {len(open_incidents) - 5} інцидентів"
+    
+    text += "\n\n💡 Деталі та дії - у веб-панелі."
+    
+    await message.answer(text, parse_mode="HTML")
+
+
 # ============= CALLBACK HANDLERS =============
 
 @dp.callback_query(F.data == "wiz:cancel")
