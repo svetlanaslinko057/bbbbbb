@@ -343,7 +343,7 @@ class YStoreAPITester:
 
 def main():
     """Main test runner"""
-    tester = NPTTNTester()
+    tester = YStoreAPITester()
     success = tester.run_all_tests()
     
     if success:
