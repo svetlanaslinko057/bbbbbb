@@ -165,11 +165,12 @@ All new admin components translated from Russian to Ukrainian:
 ## Backlog
 
 ### P0 - Critical
-- Fix external URL routing
+- ✅ Admin login works
+- ✅ UI translated to Ukrainian
 
 ### P1 - High Priority  
-- O20.3: Return Management Engine
-- Telegram bot commands (/pickup_risk, /kpi)
+- O20.3: Return Management Engine (smarter segmentation)
+- Bot commands awaiting Telegram conflict resolution
 - COD-specific aggressive reminders
 
 ### P2 - Enhancements
