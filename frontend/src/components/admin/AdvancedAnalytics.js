@@ -568,20 +568,20 @@ const AdvancedAnalytics = () => {
           {/* Time on Pages */}
           <div className="bg-white rounded-2xl border border-gray-200">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold">⏱️ Время на страницах</h3>
+              <h3 className="text-xl font-bold">⏱️ Час на сторінках</h3>
               <p className="text-gray-600 text-sm mt-1">
-                Среднее время, которое пользователи проводят на разных страницах сайта
+                Середній час, який користувачі проводять на різних сторінках сайту
               </p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Страница</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Визитов</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Среднее время</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Мин. время</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Макс. время</th>
+                    <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Сторінка</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Візитів</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Середній час</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Мін. час</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Макс. час</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -595,20 +595,20 @@ const AdvancedAnalytics = () => {
                           {page.total_visits}
                         </td>
                         <td className="py-4 px-6 text-right font-bold text-green-600">
-                          {Math.floor(page.avg_time_seconds / 60)}м {Math.round(page.avg_time_seconds % 60)}с
+                          {Math.floor(page.avg_time_seconds / 60)}хв {Math.round(page.avg_time_seconds % 60)}с
                         </td>
                         <td className="py-4 px-6 text-right text-gray-600">
-                          {Math.floor(page.min_time_seconds / 60)}м {Math.round(page.min_time_seconds % 60)}с
+                          {Math.floor(page.min_time_seconds / 60)}хв {Math.round(page.min_time_seconds % 60)}с
                         </td>
                         <td className="py-4 px-6 text-right text-gray-600">
-                          {Math.floor(page.max_time_seconds / 60)}м {Math.round(page.max_time_seconds % 60)}с
+                          {Math.floor(page.max_time_seconds / 60)}хв {Math.round(page.max_time_seconds % 60)}с
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
                       <td colSpan="5" className="py-8 text-center text-gray-500">
-                        Нет данных о времени на страницах
+                        Немає даних про час на сторінках
                       </td>
                     </tr>
                   )}
@@ -620,9 +620,9 @@ const AdvancedAnalytics = () => {
           {/* Product Page Analytics */}
           <div className="bg-white rounded-2xl border border-gray-200">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold">🛍️ Аналитика страниц товаров</h3>
+              <h3 className="text-xl font-bold">🛍️ Аналітика сторінок товарів</h3>
               <p className="text-gray-600 text-sm mt-1">
-                Время на странице товара и конверсия в добавление в корзину
+                Час на сторінці товару та конверсія в додавання до кошика
               </p>
             </div>
             <div className="overflow-x-auto">
@@ -630,10 +630,10 @@ const AdvancedAnalytics = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Товар</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Визитов</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Среднее время</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Добавлено в корзину</th>
-                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Конверсия</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Візитів</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Середній час</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Додано до кошика</th>
+                    <th className="text-right py-4 px-6 text-sm font-semibold text-gray-700">Конверсія</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -650,7 +650,7 @@ const AdvancedAnalytics = () => {
                           {product.page_visits}
                         </td>
                         <td className="py-4 px-6 text-right font-medium text-blue-600">
-                          {Math.floor(product.avg_time_seconds / 60)}м {Math.round(product.avg_time_seconds % 60)}с
+                          {Math.floor(product.avg_time_seconds / 60)}хв {Math.round(product.avg_time_seconds % 60)}с
                         </td>
                         <td className="py-4 px-6 text-right font-medium text-green-600">
                           {product.add_to_cart_count}
@@ -671,7 +671,7 @@ const AdvancedAnalytics = () => {
                   ) : (
                     <tr>
                       <td colSpan="5" className="py-8 text-center text-gray-500">
-                        Нет данных об аналитике товаров
+                        Немає даних про аналітику товарів
                       </td>
                     </tr>
                   )}
@@ -683,9 +683,9 @@ const AdvancedAnalytics = () => {
           {/* User Behavior Flow */}
           <div className="bg-white rounded-2xl border border-gray-200">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold">🔀 Поток поведения пользователей</h3>
+              <h3 className="text-xl font-bold">🔀 Потік поведінки користувачів</h3>
               <p className="text-gray-600 text-sm mt-1">
-                Наиболее частые переходы между страницами
+                Найчастіші переходи між сторінками
               </p>
             </div>
             <div className="p-6">
