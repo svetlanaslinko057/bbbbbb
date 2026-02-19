@@ -303,15 +303,15 @@ const AdminPanel = () => {
         {/* Users Tab */}
         {activeTab === 'users' && (
           <div className="bg-white rounded-2xl p-6 border border-gray-200">
-            <h2 className="text-2xl font-bold mb-6">Список пользователей</h2>
+            <h2 className="text-2xl font-bold mb-6">Список користувачів</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Email</th>
-                    <th className="text-left py-3 px-4">Имя</th>
+                    <th className="text-left py-3 px-4">Ім'я</th>
                     <th className="text-left py-3 px-4">Роль</th>
-                    <th className="text-left py-3 px-4">Дата регистрации</th>
+                    <th className="text-left py-3 px-4">Дата реєстрації</th>
                   </tr>
                 </thead>
                 <tbody>
