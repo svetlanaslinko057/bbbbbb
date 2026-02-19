@@ -150,25 +150,25 @@ const AnalyticsDashboard = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard 
-          title="Revenue" 
+          title={t.revenue}
           value={formatCurrency(kpi?.revenue)} 
           icon={DollarSign} 
           color="green"
         />
         <KPICard 
-          title="Orders" 
+          title={t.orders}
           value={kpi?.orders || 0} 
           icon={ShoppingCart} 
           color="blue"
         />
         <KPICard 
-          title="AOV" 
+          title={t.aov}
           value={formatCurrency(kpi?.aov)} 
           icon={BarChart2} 
           color="purple"
         />
         <KPICard 
-          title="Delivered" 
+          title={t.delivered}
           value={kpi?.delivered || 0} 
           icon={Package} 
           color="teal"
@@ -179,7 +179,7 @@ const AnalyticsDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue Chart */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold mb-4">Revenue Trend</h3>
+          <h3 className="text-lg font-semibold mb-4">{t.revenueTrend}</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={kpi?.by_day || []}>
@@ -187,8 +187,8 @@ const AnalyticsDashboard = () => {
                 <XAxis dataKey="day" fontSize={12} tickFormatter={(v) => v?.slice(5)} />
                 <YAxis fontSize={12} />
                 <Tooltip 
-                  formatter={(value) => [formatCurrency(value), 'Revenue']}
-                  labelFormatter={(label) => `Date: ${label}`}
+                  formatter={(value) => [formatCurrency(value), t.revenue]}
+                  labelFormatter={(label) => `Дата: ${label}`}
                 />
                 <Line 
                   type="monotone" 
@@ -204,7 +204,7 @@ const AnalyticsDashboard = () => {
 
         {/* Orders Chart */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold mb-4">Orders by Day</h3>
+          <h3 className="text-lg font-semibold mb-4">{t.ordersByDay}</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={kpi?.by_day || []}>
@@ -223,40 +223,40 @@ const AnalyticsDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Order Funnel */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold mb-4">Order Funnel</h3>
+          <h3 className="text-lg font-semibold mb-4">{t.orderFunnel}</h3>
           <div className="divide-y divide-gray-100">
-            <FunnelItem label="Paid" value={kpi?.paid || 0} color="bg-green-500" />
-            <FunnelItem label="Awaiting Payment" value={kpi?.awaiting_payment || 0} color="bg-yellow-500" />
-            <FunnelItem label="Processing" value={kpi?.processing || 0} color="bg-blue-500" />
-            <FunnelItem label="Shipped" value={kpi?.shipped || 0} color="bg-purple-500" />
-            <FunnelItem label="Delivered" value={kpi?.delivered || 0} color="bg-teal-500" />
-            <FunnelItem label="Cancelled" value={kpi?.cancels || 0} color="bg-red-500" />
-            <FunnelItem label="Returned" value={kpi?.returns || 0} color="bg-orange-500" />
+            <FunnelItem label={t.paid} value={kpi?.paid || 0} color="bg-green-500" />
+            <FunnelItem label={t.awaitingPayment} value={kpi?.awaiting_payment || 0} color="bg-yellow-500" />
+            <FunnelItem label={t.processing} value={kpi?.processing || 0} color="bg-blue-500" />
+            <FunnelItem label={t.shipped} value={kpi?.shipped || 0} color="bg-purple-500" />
+            <FunnelItem label={t.delivered} value={kpi?.delivered || 0} color="bg-teal-500" />
+            <FunnelItem label={t.cancelled} value={kpi?.cancels || 0} color="bg-red-500" />
+            <FunnelItem label={t.returned} value={kpi?.returns || 0} color="bg-orange-500" />
           </div>
         </div>
 
         {/* Risk Distribution */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold mb-4">Risk Distribution</h3>
+          <h3 className="text-lg font-semibold mb-4">{t.riskDistribution}</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 rounded bg-green-500 mr-3"></div>
-                <span>LOW</span>
+                <span>Низький</span>
               </div>
               <span className="font-bold">{riskDist.LOW || 0}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 rounded bg-yellow-500 mr-3"></div>
-                <span>WATCH</span>
+                <span>Середній</span>
               </div>
               <span className="font-bold">{riskDist.WATCH || 0}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 rounded bg-red-500 mr-3"></div>
-                <span>RISK</span>
+                <span>Високий</span>
               </div>
               <span className="font-bold">{riskDist.RISK || 0}</span>
             </div>
@@ -264,15 +264,15 @@ const AnalyticsDashboard = () => {
           
           {/* SLA */}
           <div className="mt-6 pt-6 border-t border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-500 mb-3">Delivery SLA (hours)</h4>
+            <h4 className="text-sm font-semibold text-gray-500 mb-3">{t.deliverySLA}</h4>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-lg font-bold text-gray-900">{(kpi?.sla?.avg_h || 0).toFixed(1)}</p>
-                <p className="text-xs text-gray-500">Average</p>
+                <p className="text-xs text-gray-500">{t.average}</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-gray-900">{(kpi?.sla?.median_h || 0).toFixed(1)}</p>
-                <p className="text-xs text-gray-500">Median</p>
+                <p className="text-xs text-gray-500">{t.median}</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-gray-900">{(kpi?.sla?.p95_h || 0).toFixed(1)}</p>
