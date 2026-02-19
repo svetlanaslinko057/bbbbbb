@@ -3586,6 +3586,12 @@ from modules.finance.finance_routes import router as finance_router
 from modules.crm.crm_routes import router as crm_router
 from modules.crm.actions.crm_actions_routes import router as crm_actions_router
 
+# O13-O18: Import Guard, Risk, Timeline, Analytics routers
+from modules.guard.guard_routes import router as guard_router
+from modules.risk.risk_routes import router as risk_router
+from modules.timeline.timeline_routes import router as timeline_router
+from modules.analytics_intel.analytics_routes import router as analytics_router
+
 # Include legacy api_router
 app.include_router(api_router)
 
