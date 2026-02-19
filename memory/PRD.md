@@ -100,6 +100,36 @@ When `at_point_7plus >= 3` OR `amount_at_risk >= 10000 UAH`:
 - Actions: Send reminder, Mute TTN
 - Run engine button
 
+## Bot Updates (Feb 19, 2026)
+
+### New Bot Commands
+Added new menu buttons to Telegram bot for O13-O20 modules:
+- 📮 **Повернення** - Pickup control, at-risk parcels
+- ⚠️ **Ризики** - High-risk customers display
+- 📈 **Аналітика** - Daily KPIs and stats
+- 🛡️ **Guard** - Fraud/KPI incident alerts
+
+### Bot Location
+`/app/backend/modules/bot/bot_app.py`
+
+### Note
+Bot may show TelegramConflictError if previous instance is still running.
+This resolves automatically when the old instance terminates.
+
+## UI Translation (Feb 19, 2026)
+
+### Completed Ukrainian Translation
+All new admin components translated from Russian to Ukrainian:
+- AnalyticsDashboard.js ✅
+- OrdersAnalytics.js ✅  
+- AdvancedAnalytics.js ✅
+- AdminPanel.js ✅
+
+### Key Translations Applied
+- "Загальний дохід", "Усього замовлень", "Користувачі", "Товари"
+- "Дохід за останні 30 днів", "Розширена Аналітика"
+- All table headers, buttons, filter options
+
 ## All O13-O20 Modules Summary
 
 | Module | Status | Description |
