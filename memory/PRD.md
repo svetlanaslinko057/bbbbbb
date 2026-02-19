@@ -153,7 +153,14 @@ All new admin components translated from Russian to Ukrainian:
 - Nova Poshta: 5cb1e3ebc23e75d737fd57c1e056ecc9
 
 ## Known Limitations
-- External preview URL (platform issue) - APIs work on localhost
+- Bot conflict: Telegram allows only one polling instance. Resolves when previous terminates.
+- External preview URL may need refresh after platform wakes up
+
+## Completed This Session (Feb 19, 2026)
+1. ✅ Added new bot commands (📮 Повернення, ⚠️ Ризики, 📈 Аналітика, 🛡️ Guard)
+2. ✅ Translated admin UI to Ukrainian (AnalyticsDashboard, OrdersAnalytics, AdvancedAnalytics)
+3. ✅ Verified admin login works (admin@ystore.ua / admin123)
+4. ✅ Bot is running with new modules
 
 ## Backlog
 
