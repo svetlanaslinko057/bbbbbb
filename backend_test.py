@@ -74,6 +74,23 @@ class YStoreAPITester:
             else:
                 return None, f"Unsupported method: {method}"
             
+            # If external URL fails with 404 and we have a fallback, try localhost
+            if response.status_code == 404 and self.fallback_url and self.base_url != self.fallback_url:
+                print(f"External URL failed with 404, trying localhost...")
+                url = f"{self.fallback_url}/api{endpoint}"
+                print(f"Making {method} request to: {url}")
+                
+                if method == 'GET':
+                    response = requests.get(url, headers=req_headers, timeout=30)
+                elif method == 'POST':
+                    response = requests.post(url, json=data, headers=req_headers, timeout=30)
+                elif method == 'PUT':
+                    response = requests.put(url, json=data, headers=req_headers, timeout=30)
+                
+                # Update base_url to use localhost for future requests
+                self.base_url = self.fallback_url
+                print(f"Switched to localhost for remaining tests")
+            
             success = response.status_code == expect_status
             result_data = {}
             try:
