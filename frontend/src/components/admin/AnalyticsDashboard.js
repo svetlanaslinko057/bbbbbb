@@ -100,27 +100,27 @@ const AnalyticsDashboard = () => {
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Общий доход"
+          title="Загальний дохід"
           value={`$${stats?.total_revenue?.toLocaleString() || 0}`}
           icon={DollarSign}
           color="green"
         />
         <StatCard
-          title="Всего заказов"
+          title="Усього замовлень"
           value={stats?.total_orders || 0}
           icon={ShoppingBag}
           color="blue"
         />
         <StatCard
-          title="Пользователи"
+          title="Користувачі"
           value={stats?.total_users || 0}
           icon={Users}
           trend="up"
-          trendValue={`+${stats?.users_this_month || 0} this month`}
+          trendValue={`+${stats?.users_this_month || 0} цього місяця`}
           color="purple"
         />
         <StatCard
-          title="Продукты"
+          title="Товари"
           value={stats?.total_products || 0}
           icon={Package}
           color="orange"
@@ -129,7 +129,7 @@ const AnalyticsDashboard = () => {
 
       {/* Revenue Chart */}
       <div className="bg-white rounded-2xl p-6 border border-gray-200">
-        <h3 className="text-xl font-bold mb-4">Доход за последние 30 дней</h3>
+        <h3 className="text-xl font-bold mb-4">Дохід за останні 30 днів</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -137,8 +137,8 @@ const AnalyticsDashboard = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="revenue" stroke="#0088FE" strokeWidth={2} name="Доход ($)" />
-            <Line type="monotone" dataKey="orders" stroke="#00C49F" strokeWidth={2} name="Заказы" />
+            <Line type="monotone" dataKey="revenue" stroke="#0088FE" strokeWidth={2} name="Дохід ($)" />
+            <Line type="monotone" dataKey="orders" stroke="#00C49F" strokeWidth={2} name="Замовлення" />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -146,7 +146,7 @@ const AnalyticsDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Products */}
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
-          <h3 className="text-xl font-bold mb-4">Топ продукты</h3>
+          <h3 className="text-xl font-bold mb-4">Топ товари</h3>
           <div className="space-y-4">
             {topProducts.map((product, index) => (
               <div key={product.product_id} className="flex items-center gap-4">
@@ -162,11 +162,11 @@ const AnalyticsDashboard = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{product.title}</p>
-                  <p className="text-sm text-gray-500">{product.total_quantity} sold</p>
+                  <p className="text-sm text-gray-500">{product.total_quantity} продано</p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-green-600">${product.total_revenue}</p>
-                  <p className="text-xs text-gray-500">{product.order_count} orders</p>
+                  <p className="text-xs text-gray-500">{product.order_count} замовлень</p>
                 </div>
               </div>
             ))}
@@ -175,7 +175,7 @@ const AnalyticsDashboard = () => {
 
         {/* Category Distribution */}
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
-          <h3 className="text-xl font-bold mb-4">Распределение по категориям</h3>
+          <h3 className="text-xl font-bold mb-4">Розподіл за категоріями</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
