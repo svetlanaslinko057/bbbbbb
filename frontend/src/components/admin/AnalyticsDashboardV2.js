@@ -124,7 +124,7 @@ const AnalyticsDashboard = () => {
     <div className="space-y-6" data-testid="analytics-dashboard">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t.title}</h1>
         <div className="flex items-center gap-4">
           <select
             value={range}
@@ -132,10 +132,10 @@ const AnalyticsDashboard = () => {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             data-testid="range-selector"
           >
-            <option value={7}>7 days</option>
-            <option value={14}>14 days</option>
-            <option value={30}>30 days</option>
-            <option value={90}>90 days</option>
+            <option value={7}>7 {t.days}</option>
+            <option value={14}>14 {t.days}</option>
+            <option value={30}>30 {t.days}</option>
+            <option value={90}>90 {t.days}</option>
           </select>
           <button
             onClick={loadData}
