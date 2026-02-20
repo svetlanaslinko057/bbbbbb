@@ -12,6 +12,32 @@ class OpsDashboardService:
         self.notifs = db["notification_queue"]
         self.customers = db["customers"]
 
+    async def pickup_control_stats(self):
+        """O20.2: Get pickup control KPIs"""
+        def base_query(days: int):
+            return {
+                "shipment.daysAtPoint": {"$gte": days},
+                "status": {"$in": ["SHIPPED", "shipped", "PROCESSING", "processing"]}
+            }
+        
+        days2 = await self.orders.count_documents(base_query(2))
+        days5 = await self.orders.count_documents(base_query(5))
+        days7 = await self.orders.count_documents(base_query(7))
+        
+        # Calculate amount at risk
+        cursor = self.orders.find(base_query(7), {"totals.grand": 1, "total_amount": 1, "_id": 0})
+        amount = 0
+        async for o in cursor:
+            amt = float((o.get("totals") or {}).get("grand") or o.get("total_amount") or 0)
+            amount += amt
+        
+        return {
+            "days2plus": days2,
+            "days5plus": days5,
+            "days7plus": days7,
+            "amount_at_risk_7plus": round(amount, 2)
+        }
+
     async def notifications_stats(self, date_from: str, date_to: str):
         pipeline = [
             {"$match": {"created_at": {"$gte": date_from, "$lte": date_to}}},
