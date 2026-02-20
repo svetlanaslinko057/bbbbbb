@@ -184,7 +184,8 @@ All new admin components translated from Russian to Ukrainian:
 | O17 | ✅ | Customer Timeline |
 | O18 | ✅ | Analytics Intelligence |
 | O19 | ✅ | Web Admin UI (Analytics Dashboard) |
-| O20 | ✅ | Pickup Control Engine |
+| O20.1 | ✅ | Pickup Control Engine (Backend) |
+| O20.2 | ✅ | Pickup Control Ops (TG + Admin UI) |
 
 ## Test Results (Feb 19, 2026)
 - O13-O18: 15/15 backend tests passed (100%)
