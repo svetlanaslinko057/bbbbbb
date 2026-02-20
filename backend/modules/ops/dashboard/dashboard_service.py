@@ -83,6 +83,7 @@ class OpsDashboardService:
         funnel = await self.orders_funnel(date_from, date_to)
         notif = await self.notifications_stats(date_from, date_to)
         crm = await self.crm_stats()
+        pickup = await self.pickup_control_stats()
 
         revenue = float(finance_summary.get("revenue", 0))
         net = float(finance_summary.get("net", 0))
@@ -100,6 +101,7 @@ class OpsDashboardService:
                 "notifications": notif,
                 "crm_segments": crm,
             },
+            "pickup": pickup,
             "finance": {
                 "summary": finance_summary,
                 "daily": finance_daily,
