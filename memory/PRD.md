@@ -130,6 +130,50 @@ All new admin components translated from Russian to Ukrainian:
 - "Дохід за останні 30 днів", "Розширена Аналітика"
 - All table headers, buttons, filter options
 
+## O20.2: Pickup Control Ops (Feb 20, 2026)
+
+### Backend API Endpoints
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v2/admin/pickup-control/summary` | GET | KPI summary (2+/5+/7+ days, amount at risk) |
+| `/api/v2/admin/pickup-control/risk` | GET | Risk list with pagination (skip, limit) |
+| `/api/v2/admin/pickup-control/send` | POST | Manual send reminder (ttn, level) |
+| `/api/v2/admin/pickup-control/mute` | POST | Mute TTN (hours) |
+| `/api/v2/admin/pickup-control/unmute` | POST | Unmute TTN |
+| `/api/v2/admin/pickup-control/find` | GET | Find order by TTN |
+
+### Telegram Bot Commands
+- `/pickup_today` - KPI зведення (2+/5+/7+ днів)
+- `/pickup_risk [days]` - Список ризикових ТТН з пагінацією
+- `/pickup_find <ttn>` - Пошук конкретної ТТН
+- `/pickup_help` - Довідка
+
+### Inline Buttons
+- 📩 Надіслати - відправка нагадування з підтвердженням
+- 🔕 Mute - заглушення (24г/7д/30д)
+- 🔈 Unmute - увімкнення нагадувань
+- 👤 Клієнт - відкрити картку клієнта
+
+### Admin UI Page
+`/admin/pickup-control` - PickupControlPage.js
+- KPI картки (2+/5+/7+ днів, сума під ризиком)
+- Таблиця ризикових відправлень
+- Дії: Send, Mute, Unmute
+- Пагінація
+
+### Ops Dashboard Integration
+`/api/v2/admin/ops/dashboard` тепер включає блок `pickup`:
+```json
+{
+  "pickup": {
+    "days2plus": 0,
+    "days5plus": 0,
+    "days7plus": 0,
+    "amount_at_risk_7plus": 0
+  }
+}
+```
+
 ## All O13-O20 Modules Summary
 
 | Module | Status | Description |
